@@ -33,7 +33,8 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0']
+      max: [5, 'Rating must be below 5.0'],
+      set: val => Math.round(val * 10) / 10
     },
     ratingsQuantity: {
       type: Number,
@@ -80,7 +81,7 @@ const tourSchema = new mongoose.Schema(
     startLocation: {
       // GeoJSON is used to specify geospacial data
       type: {
-        String,
+        type: String,
         default: 'Point',
         // THis defines the options (only one in this case)
         enum: ['Point']
@@ -114,6 +115,18 @@ const tourSchema = new mongoose.Schema(
 /////// Virtual Property ///////
 tourSchema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
+});
+
+// Setting up indexes
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
+// Virtual Populate
+tourSchema.virtual('reviews', {
+  ref: 'Review', // The Model this points to
+  foreignField: 'tour', // The field within that model
+  localField: '_id' // The corresponding field within the parent model (the tour's ID in this case)
 });
 
 /////// Mongo DB Middware ///////
@@ -163,13 +176,13 @@ tourSchema.pre(/^find/, function(next) {
 });
 
 // Aggregation middleware
-tourSchema.pre('aggregate', function(next) {
-  // Add the removal of a secrect doc by putting
-  // the filter at the begining of the array using .unshift()
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+// tourSchema.pre('aggregate', function(next) {
+//   // Add the removal of a secrect doc by putting
+//   // the filter at the begining of the array using .unshift()
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
 
-  next();
-});
+//   next();
+// });
 
 //  The .post() middleware rund after the .save(0 or .create()
 //  The DOC that was jhust saved can be passed as a param

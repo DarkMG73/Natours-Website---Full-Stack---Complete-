@@ -1,25 +1,30 @@
 const Review = require('./../models/reviewModel');
-const APIFeatures = require('./../utils/apiFeatures');
+// const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
+const factory = require('./handlerFactory');
 // const AppError = require('./../utils/appError');
 
-exports.getAllReviews = catchAsync(async function(req, res, next) {
-  const features = await new APIFeatures(Review.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+exports.getAllReviews = factory.getAll(Review);
+// exports.getAllReviews = catchAsync(async function(req, res, next) {
+//   let filter = {};
+//   if (req.params.tourId) filter = { tour: req.params.tourId };
 
-  const reviews = await features.query;
+//   const features = await new APIFeatures(Review.find(filter), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
 
-  res.status(200).json({
-    staus: 'success',
-    requestedAt: req.requestTime,
-    data: {
-      reviews
-    }
-  });
-});
+//   const reviews = await features.query;
+
+//   res.status(200).json({
+//     staus: 'success',
+//     requestedAt: req.requestTime,
+//     data: {
+//       reviews
+//     }
+//   });
+// });
 
 exports.getReviews = catchAsync(async function(req, res, next) {
   // const reviews = await new Review.find(), req.query
@@ -33,17 +38,28 @@ exports.getReviews = catchAsync(async function(req, res, next) {
   });
 });
 
-exports.createReview = catchAsync(async function(req, res, next) {
-  // const reviews = await new Review.find(), req.query
-  console.log('Post Review  For!');
+exports.setTourUserIds = (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+};
+exports.createReview = factory.createOne(Review);
+// exports.createReview = catchAsync(async function(req, res, next) {
+//   // const reviews = await new Review.find(), req.query
+//   console.log('req.params', req.params);
+//   if (!req.body.tour) req.body.tour = req.params.tourId;
+//   if (!req.body.user) req.body.user = req.user.id;
 
-  const newReview = await Review.create(req.body);
+//   console.log('Post Review  For!');
 
-  res.status(200).json({
-    status: 'success',
-    newReview
-  });
-});
+//   const newReview = await Review.create(req.body);
+
+//   res.status(200).json({
+//     status: 'success',
+//     newReview
+//   });
+// });
 
 exports.getReviewById = catchAsync(async function(req, res, next) {
   // const reviews = await new Review.find(), req.query
@@ -55,29 +71,32 @@ exports.getReviewById = catchAsync(async function(req, res, next) {
   });
 });
 
-exports.getSingleReview = catchAsync(async function(req, res, next) {
-  const reviewId = req.params.id;
-  const review = await Review.findById(reviewId);
-  res.status(200).json({
-    status: 'success',
-    review
-  });
-});
-exports.updateReview = catchAsync(async function(req, res, next) {
-  // const reviews = await new Review.find(), req.query
-  console.log('Update Review  By ID!');
-  const reviewId = req.params.id;
+exports.getSingleReview = factory.getOne(Review);
+// exports.getSingleReview = catchAsync(async function(req, res, next) {
+//   const reviewId = req.params.id;
+//   const review = await Review.findById(reviewId);
+//   res.status(200).json({
+//     status: 'success',
+//     review
+//   });
+// });
 
-  const review = await Review.findByIdAndUpdate(reviewId, req.body, {
-    // This returns newly updated doc
-    new: true,
-    runValidators: true
-  });
-  res.status(200).json({
-    status: 'success',
-    review
-  });
-});
+exports.updateReview = factory.updateOne(Review);
+// exports.updateReview = catchAsync(async function(req, res, next) {
+//   // const reviews = await new Review.find(), req.query
+//   console.log('Update Review  By ID!');
+//   const reviewId = req.params.id;
+
+//   const review = await Review.findByIdAndUpdate(reviewId, req.body, {
+//     // This returns newly updated doc
+//     new: true,
+//     runValidators: true
+//   });
+//   res.status(200).json({
+//     status: 'success',
+//     review
+//   });
+// });
 
 exports.getUserReviews = catchAsync(async function(req, res, next) {
   const userId = req.params.id;
@@ -88,3 +107,5 @@ exports.getUserReviews = catchAsync(async function(req, res, next) {
     userReviews
   });
 });
+
+exports.deleteReview = factory.deleteOne(Review);

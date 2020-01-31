@@ -1,6 +1,7 @@
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const factory = require('./handlerFactory');
 
 // By using the Rest operator here, all params give after the obj will
 // be put into an array
@@ -60,17 +61,22 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  //Send response
-  res.status(200).json({
-    staus: 'success',
-    requestedAt: req.requestTime,
-    data: {
-      users
-    }
-  });
-});
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+exports.getUser = factory.getOne(User);
+// exports.getUser = catchAsync(async (req, res, next) => {
+//   const users = await User.find();
+//   //Send response
+//   res.status(200).json({
+//     staus: 'success',
+//     requestedAt: req.requestTime,
+//     data: {
+//       users
+//     }
+//   });
+// });
 
 exports.createUser = (req, res) => {
   res.status(500).json({
@@ -78,15 +84,7 @@ exports.createUser = (req, res) => {
     message: 'This route is not yet defined'
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined'
-  });
-};
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined'
-  });
-};
+
+// Do NOT update passwords with this!
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);

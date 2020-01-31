@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -10,6 +11,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewRouter = require('./routes/viewRoutes');
 
 // app.get('/', (req, res) => {
 //   res.status(200).json({ message: 'Hello from the server', app: 'Natours' });
@@ -22,6 +24,16 @@ const reviewRouter = require('./routes/reviewRoutes');
 // Creating a RESTful API
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, '/views'));
+
+// *** Serving Static Files***
+// This is used to establish a static direactory
+// With this, anything that ends in a file will work
+//  Like http://localhost:3000/overview.html#
+// Or http://localhost:3000/img/pin.png
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -78,13 +90,6 @@ app.use(
   })
 );
 
-// *** Serving Static Files***
-// This is used to establish a static direactory
-// With this, anything that ends in a file will work
-//  Like http://localhost:3000/overview.html#
-// Or http://localhost:3000/img/pin.png
-app.use(express.static(`${__dirname}/public`));
-
 // *** Test Middleware***
 app.use((req, res, next) => {
   console.log('Hello form the middle!');
@@ -102,6 +107,7 @@ app.use((req, res, next) => {
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/users', userRouter);
