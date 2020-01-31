@@ -1,5 +1,35 @@
 /* eslint-disable */
 
-const locations = document.getElementById('map').dataset.locations;
+const locations = JSON.parse(document.getElementById('map').dataset.locations);
 
-console.log(locations);
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiZGFya21nNzMiLCJhIjoiY2s2MW92dXQxMDNqZTNvcW5zaGxpbGx2dCJ9.hxLUXCLLgfgO9WsNOW55ow';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/darkmg73/ck61oyp4p0bn21jmtl1ztyjk2',
+  center: [-118.113491, 34.111745],
+  zoom: 10,
+  interactive: false
+});
+
+bounds = new mapboxgl.LngLatBounds();
+
+locations.forEach(loc => {
+  console.log('loc', loc);
+  // Create marker
+  const el = document.createElement('div');
+  el.className = 'marker';
+
+  // Add marker
+  new mapboxgl.Marker({
+    element: el,
+    anchor: 'bottom'
+  })
+    .setLngLat(loc.coordinates)
+    .addTo(map);
+
+  // Extends the map bounds to include the current location
+  bounds.extend(loc.coordinates);
+});
+
+map.fitBounds(bounds);
