@@ -60,7 +60,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // The +password adds back the password to the search
   const user = await User.findOne({ email }).select('+password');
 
-  if (!user || (await !user.correctPassword(password, user.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
   // 3) If everything is OK, send token to client
@@ -76,6 +76,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if ((req.cookies, jwt)) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {

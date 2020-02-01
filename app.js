@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
@@ -66,6 +67,8 @@ app.use('/api', limiter);
 // Use Body Parser json with a limit of 10kb total package size per request
 app.use(express.json({ limit: '10kb' }));
 
+// Parses data from cookies
+app.use(cookieParser());
 // *** Dsts Sanitization Against NOQL Query Injection***
 // This will look throught the query strings and params acending
 // filter out all of the dollar signs and dots
