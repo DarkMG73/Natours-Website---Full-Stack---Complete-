@@ -1,17 +1,23 @@
 {
   "name": "starter",
   "version": "1.0.0",
-  "description": "",
+  "description": "Natours Website - Full-Stack - Complete",
   "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
     "start-p": "set NODE_ENV=production && nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.8.3",
+    "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.4",
+    "core-js": "^2.6.5",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "express": "^4.17.1",
@@ -36,9 +42,18 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.17.0"
+    "eslint-plugin-react": "^7.17.0",
+    "parcel-bundler": "^1.12.4"
   },
   "engines": {
     "node": ">=10.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkMG73/Natours-Website---Full-Stack---Complete-.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DarkMG73/Natours-Website---Full-Stack---Complete-/issues"
+  },
+  "homepage": "https://github.com/DarkMG73/Natours-Website---Full-Stack---Complete-#readme"
 }

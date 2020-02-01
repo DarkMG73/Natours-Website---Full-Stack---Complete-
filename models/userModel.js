@@ -76,14 +76,6 @@ userSchema.pre('save', async function(next) {
   this.passwordConfirm = undefined;
 });
 
-userSchema.methods.correctPassword = async function(
-  candidatePassword,
-  userPassword
-) {
-  // The .compare() fnuction will take a password and compare it to the encypted password and understand if they do or do not match.
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
-
 userSchema.pre('save', function(next) {
   if (!this.isModified('password' || this.isNew)) return next();
 
@@ -94,7 +86,21 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-userSchema.methods.changePasswordAfter = function(JWTTimestamp) {
+userSchema.pre(/^find/, function(next) {
+  //This is query middleware,.
+  //This points to the current query.
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+userSchema.methods.correctPassword = async function(
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -109,12 +115,6 @@ userSchema.methods.changePasswordAfter = function(JWTTimestamp) {
   return false;
 };
 
-userSchema.pre(/^find/, function(next) {
-  //This is query middleware,.
-  //This points to the current query.
-  this.find({ active: { $ne: false } });
-  next();
-});
 userSchema.methods.createPasswordResetToken = function() {
   // Cryplto is a built-in Node module (called at the head of the page)
   // This creates a rendom token to use as a temp password.admin-nav
