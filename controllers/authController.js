@@ -66,13 +66,13 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.logout = (req, res) => {
+exports.logout = catchAsync(async (req, res) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() * 10 * 1000),
     httpOnly: true
   });
   res.status(200).json({ status: 'success' });
-};
+});
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
@@ -109,7 +109,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   // 4) CHeck if user changed after the token was issued
 
-  if (currentUser.changePasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError(
         'User recently changed the password. Please log in again.',
@@ -120,6 +120,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Grant access to protected route
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 

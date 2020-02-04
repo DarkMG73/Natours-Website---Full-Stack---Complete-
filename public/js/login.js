@@ -26,9 +26,9 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http//127.0.0.1:3000/api/v1/users/login'
+      url: 'http://localhost:3000/api/v1/users/login'
     });
-    if ((res.data.status = 'success')) location.reload(true);
+    if ((res.data.status = 'success')) location.reload(true); //TRUE is important here to make sure a fresh page is loaded (not from cache)
   } catch (err) {
     showAlert('error', 'Error logging out. Please try again.');
   }

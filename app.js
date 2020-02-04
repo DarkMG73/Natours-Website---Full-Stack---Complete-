@@ -67,6 +67,8 @@ app.use('/api', limiter);
 // Use Body Parser json with a limit of 10kb total package size per request
 app.use(express.json({ limit: '10kb' }));
 
+// For sending form data, this middleware is run to properly encoe the data being sent to the database
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 // Parses data from cookies
 app.use(cookieParser());
 // *** Dsts Sanitization Against NOQL Query Injection***
@@ -93,12 +95,12 @@ app.use(
   })
 );
 
-// *** Test Middleware***
-app.use((req, res, next) => {
-  console.log('Hello form the middle!');
+// // *** Test Middleware***
+// app.use((req, res, next) => {
+//   console.log('Hello form the middle!');
 
-  next();
-});
+//   next();
+// });
 
 //*****************
 //   Routes

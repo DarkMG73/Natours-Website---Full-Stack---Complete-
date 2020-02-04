@@ -18,7 +18,12 @@ router.patch('/updateMyPassword/', authController.updatePassword);
 
 router.get('/me', userController.getMe, userController.getUser);
 
-router.patch('/updateMe/', userController.updateMe);
+// upload.single() is Multer's way of allowing only one photo to be uploaded.
+router.patch(
+  '/updateMe/',
+  userController.uploadUserPhoto,
+  userController.updateMe
+);
 router.delete('/deleteMe/', userController.deleteMe);
 
 router.use(authController.restrictTo('admin'));
