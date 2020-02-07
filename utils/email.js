@@ -1,14 +1,43 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async options => {
-  // 1) Create a transporter (sends the email)
-  const transport = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
+module.exports = class Email {
+  constructor(user, url) {
+    this.to = user.email;
+    this.firstName = user.name.split(' ')[0];
+    this.url = url;
+    this.from = `Mike Glass <${process.env.EMAIL_FROM}>`;
+  }
+
+  createTransport() {
+    if (
+      process.env.NODE_ENV === 'production' ||
+      process.env.NODE_ENV === 'production '
+    ) {
+      // Sendgrid
+      return 1;
     }
+      // Create a transporter (sends the email)
+    return nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      }
+      // To make Gmail work, you must also
+      // activate "less secure app" in Gmail
+    });
+  }
+};
+const sendEmail = async options => {
+  // // 1) Create a transporter (sends the email)
+  // const transport = nodemailer.createTransport({
+  //   host: process.env.EMAIL_HOST,
+  //   port: process.env.EMAIL_PORT,
+  //   auth: {
+  //     user: process.env.EMAIL_USERNAME,
+  //     pass: process.env.EMAIL_PASSWORD
+  //   }
     // To make Gmail work, you must also
     // activate "less secure app" in Gmail
   });
