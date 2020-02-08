@@ -97,12 +97,11 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
+
   // 3? Check if user exists
   const currentUser = await User.findById(decoded.id);
 
   if (!currentUser) {
-    console.log('IN');
     return next(
       new AppError(
         'The user belonging to this token does no longer exist.',
@@ -172,7 +171,7 @@ exports.restrictTo = (...roles) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on posted email
   const user = await User.findOne({ email: req.body.email });
-  console.log('USER', user);
+
   if (!user) {
     return next('There is no user with that email address.', 404);
   }
@@ -201,7 +200,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message: 'Token sent to email!'
     });
   } catch (err) {
-    console.log('--------------->', err);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
@@ -220,9 +218,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex');
-
-  console.log('req.params.token', req.params.token);
-  console.log('hashedToken', hashedToken);
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,

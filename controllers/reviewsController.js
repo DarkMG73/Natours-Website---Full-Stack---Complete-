@@ -28,7 +28,7 @@ exports.getAllReviews = factory.getAll(Review);
 
 exports.getReviews = catchAsync(async function(req, res, next) {
   // const reviews = await new Review.find(), req.query
-  console.log('Get Reviews For!');
+
   const tourId = req.params.id;
 
   const reviews = await Review.find({ tour: tourId });

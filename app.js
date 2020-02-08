@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
@@ -96,6 +97,7 @@ app.use(
   })
 );
 
+app.use(compression());
 // // *** Test Middleware***
 // app.use((req, res, next) => {
 //   console.log('Hello form the middle!');
@@ -124,7 +126,7 @@ app.all('*', (req, res, next) => {
   // err.status = 404;
   // If next() has anything passed in it, it assumes it is an error
   // next(err);
-  console.log('ERR 1______________________________');
+  console.log('ERROR App All');
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 app.use(globalErrorHandler);

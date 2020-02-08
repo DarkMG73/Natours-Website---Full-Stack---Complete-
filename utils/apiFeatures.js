@@ -20,7 +20,6 @@ class APIFeatures {
 
   ////////// Sorting //////////
   sort() {
-    console.log('Sorting');
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
@@ -38,14 +37,12 @@ class APIFeatures {
       this.query = this.query.select(fields);
     } else {
       this.query = this.query.select('-__v');
-      console.log('limit');
     }
     return this;
   }
 
   ////////// Pagination //////////
   paginate() {
-    console.log('Pagination');
     // Convert the page to a number and make it 1 by default
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;
