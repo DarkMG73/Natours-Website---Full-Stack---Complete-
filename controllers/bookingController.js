@@ -8,7 +8,6 @@ const factory = require('./handlerFactory');
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
-  // console.log(tour);
 
   // 2) Create checkout session
   const session = await stripe.checkout.sessions.create({
@@ -41,6 +40,16 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
+// exports.createBookingCheckout = catchAsync(async (req, res, next) => {
+//   // This is only TEMPORARY, because it's UNSECURE: everyone can make bookings without paying
+//   const { tour, user, price } = req.query;
+
+//   if (!tour && !user && !price) return next();
+//   await Booking.create({ tour, user, price });
+
+//   res.redirect(req.originalUrl.split('?')[0]);
+// });
+
 const createBookingCheckout = async session => {
   const tour = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email })).id;
@@ -50,7 +59,6 @@ const createBookingCheckout = async session => {
 
 exports.webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
-
   let event;
   try {
     event = stripe.webhooks.constructEvent(
