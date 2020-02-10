@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController.js');
 const viewRouter = require('./routes/viewRoutes');
 
 // app.get('/', (req, res) => {
@@ -80,6 +81,12 @@ const limiter = rateLimit({
 });
 // Here we use the rate limiter only on the api path
 app.use('/api', limiter);
+
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // *** Body Parser, Reading Data from the Body Into req.body ***
 // Use Body Parser json with a limit of 10kb total package size per request
