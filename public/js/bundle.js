@@ -8499,7 +8499,7 @@ function () {
             _context2.next = 3;
             return (0, _axios.default)({
               method: 'GET',
-              url: 'http://localhost:3000/api/v1/users/login'
+              url: '/api/v1/users/login'
             });
 
           case 3:
